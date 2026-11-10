@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export const IngredienteReceta = () => {
   const [nombreReceta, setNombreReceta] = useState('');
@@ -9,7 +9,6 @@ export const IngredienteReceta = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validación de reglas de negocio
     const estadosValidos = ['Borrador', 'Publicada'];
     if (!estadosValidos.includes(estado)) {
       setAlerta({ tipo: 'error', texto: 'Error: El estado de publicación no es válido.' });
@@ -33,7 +32,6 @@ export const IngredienteReceta = () => {
       const registrosPrevios = JSON.parse(localStorage.getItem('recetario_estados')) || [];
       localStorage.setItem('recetario_estados', JSON.stringify([...registrosPrevios, nuevoRegistro]));
 
-      // Alerta accesible con role="alert"
       setAlerta({ 
         tipo: 'exito', 
         texto: `¡Receta guardada exitosamente como "${estado}"!` 
@@ -43,6 +41,7 @@ export const IngredienteReceta = () => {
       setIngrediente('');
       setEstado('Borrador');
 
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
       setAlerta({ tipo: 'error', texto: 'Ocurrió un error al guardar en el almacenamiento.' });
     }
