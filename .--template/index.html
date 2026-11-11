@@ -1,13 +1,310 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>--template</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Recetario y Catálogo Nutresa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        verdenoche: '#114622',
+                        verdenutresa: '#215B33',
+                        verdehoja: '#3D8E33',
+                        lima: '#7FBA00',
+                        verdeagua: '#569E8F',
+                        rojonutresa: '#D6121A',
+                        cafeoscuro: '#2A1605',
+                        gristexto: '#3F4040',
+                        marfil: '#F4F4E8',
+                        marfil2: '#E9E8D7',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Google Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-marfil dark:bg-cafeoscuro text-gristexto dark:text-marfil min-h-screen transition-colors duration-300 flex flex-col">
+
+    <!-- Overlay oscuro cuando el menú lateral está abierto -->
+    <div id="menuOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 hidden transition-opacity"></div>
+
+    <!-- Menú Lateral Desplegable -->
+    <aside id="sidebarMenu" class="fixed top-0 left-0 h-full w-72 bg-verdenoche dark:bg-[#0b2e16] text-marfil z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-2xl border-r border-verdeagua/20">
+        
+        <!-- Parte Superior del Menú -->
+        <div>
+            <!-- Cabecera del Menú -->
+            <div class="p-5 border-b border-verdeagua/20 flex justify-between items-start">
+                <div>
+                    <h2 class="text-lg font-bold text-white tracking-wide">Grupo Nutresa</h2>
+                    <p class="text-xs text-verdeagua mt-0.5">Módulo 2 • Recetario Maestro</p>
+                </div>
+                <button onclick="toggleSidebar()" class="text-marfil/70 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors" title="Cerrar menú">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Opciones de Navegación -->
+            <nav class="p-4 space-y-2 text-sm">
+                <a href="#" onclick="toggleSidebar()" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-verdenutresa text-white font-medium shadow-sm border-l-4 border-lima">
+                    <span class="w-2 h-2 rounded-full bg-lima"></span>
+                    <span>Asignar Ingredientes</span>
+                </a>
+                <a href="#" onclick="toggleSidebar()" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-marfil/80 hover:bg-verdenutresa/60 hover:text-white transition-colors">
+                    <span class="w-2 h-2 rounded-full bg-verdeagua/50"></span>
+                    <span>Fichas de Recetas</span>
+                </a>
+                <a href="#" onclick="toggleSidebar()" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-marfil/80 hover:bg-verdenutresa/60 hover:text-white transition-colors">
+                    <span class="w-2 h-2 rounded-full bg-verdeagua/50"></span>
+                    <span>Marcas Oficiales</span>
+                </a>
+                <a href="#" onclick="toggleSidebar()" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-marfil/80 hover:bg-verdenutresa/60 hover:text-white transition-colors">
+                    <span class="w-2 h-2 rounded-full bg-verdeagua/50"></span>
+                    <span>Ajustes de Cubicaciones</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Parte Inferior del Menú: Botón Día/Noche y Versión -->
+        <div class="p-4 border-t border-verdeagua/20 space-y-4 bg-black/15">
+            <!-- Botón Modo Día / Noche dentro del menú -->
+            <button onclick="toggleDarkMode()" class="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-verdenutresa hover:bg-verdehoja text-white transition-colors shadow-md">
+                <div class="flex items-center space-x-3">
+                    <svg id="sunIcon" class="w-5 h-5 hidden text-lima" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moonIcon" class="w-5 h-5 text-lima" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>
+                    <span id="themeText" class="text-sm font-medium">Modo Noche</span>
+                </div>
+                <span class="text-xs bg-verdenoche px-2 py-0.5 rounded text-lima">Cambiar</span>
+            </button>
+
+            <p class="text-[11px] text-center text-marfil/50">Plataforma I+D v2.4.1</p>
+        </div>
+    </aside>
+
+    <!-- Barra Superior Minimalista -->
+    <header class="bg-verdenutresa dark:bg-verdenoche text-marfil shadow-md sticky top-0 z-30">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+            
+            <!-- Botón Hamburguesa + Ruta -->
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleSidebar()" class="p-2 rounded-lg bg-verdenoche/60 hover:bg-verdehoja text-white transition-colors focus:outline-none" title="Abrir Menú">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <div class="flex items-center space-x-2 text-xs md:text-sm">
+                    <span class="text-verdeagua font-medium hidden sm:inline">Gestión</span>
+                    <span class="text-marfil/40 hidden sm:inline">/</span>
+                    <span class="font-bold text-white tracking-wide">Recetario Nutresa</span>
+                </div>
+            </div>
+
+            <!-- Botón de Música con mayor volumen y presencia -->
+            <button onclick="toggleAmbientMusic()" id="musicBtn" class="flex items-center space-x-2 bg-verdenoche dark:bg-cafeoscuro hover:bg-verdehoja px-3.5 py-1.5 rounded-full border border-lima text-xs transition-all shadow-lg animate-pulse">
+                <span id="musicIcon" class="text-lima text-sm font-bold">▶</span>
+                <span id="musicLabel" class="font-bold text-marfil">Música Activa: Off</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-grow max-w-5xl mx-auto p-4 md:p-6 w-full">
+        
+        <!-- Título del Módulo -->
+        <div class="mb-6 text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-verdenutresa dark:text-verdeagua">Módulo de Recetario y Catálogo Nutresa</h1>
+            <p class="text-xs md:text-sm text-gristexto dark:text-marfil2 mt-1">Gestión avanzada de recetas y componentes de cocina</p>
+        </div>
+
+        <!-- Editor de Recetas - Gestión de Estado -->
+        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-lg p-6 mb-8 border border-marfil2 dark:border-zinc-700 transition-colors">
+            <h2 class="text-lg font-semibold mb-4 text-verdenoche dark:text-lima border-b pb-2 border-gray-200 dark:border-zinc-700">Editor de Recetas - Gestión de Estado</h2>
+            
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Nombre de la Receta</label>
+                    <input type="text" placeholder="Ej. Frijoles Antioqueños" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-zinc-600 bg-marfil dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-verdehoja">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">Ingrediente Principal</label>
+                    <input type="text" placeholder="Ej. Frijol cargamanto, plátano..." class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-zinc-600 bg-marfil dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-verdehoja">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">Estado de Publicación</label>
+                    <div class="flex items-center space-x-6 mt-2">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="estado" checked class="text-verdehoja focus:ring-verdehoja">
+                            <span>Borrador</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="estado" class="text-verdehoja focus:ring-verdehoja">
+                            <span>Publicada</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="button" class="w-full bg-verdenutresa hover:bg-verdenoche text-white font-medium py-2.5 rounded-lg transition-colors shadow">
+                        Guardar Registro
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Lista de Productos -->
+        <div>
+            <h3 class="text-md font-bold mb-4 text-verdenoche dark:text-verdeagua">Lista de Productos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white dark:bg-zinc-800 p-4 rounded-lg shadow border border-marfil2 dark:border-zinc-700">
+                    <h4 class="font-semibold text-verdenutresa dark:text-lima">Ollie Jerde</h4>
+                    <p class="text-sm text-gristexto dark:text-marfil2">Precio: $ -</p>
+                </div>
+                <div class="bg-white dark:bg-zinc-800 p-4 rounded-lg shadow border border-marfil2 dark:border-zinc-700">
+                    <h4 class="font-semibold text-verdenutresa dark:text-lima">Connie Brekke</h4>
+                    <p class="text-sm text-gristexto dark:text-marfil2">Precio: $ -</p>
+                </div>
+                <div class="bg-white dark:bg-zinc-800 p-4 rounded-lg shadow border border-marfil2 dark:border-zinc-700">
+                    <h4 class="font-semibold text-verdenutresa dark:text-lima">Dr. Clyde Jakubowski</h4>
+                    <p class="text-sm text-gristexto dark:text-marfil2">Precio: $ -</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="bg-verdenutresa dark:bg-verdenoche text-marfil text-center py-4 text-xs mt-auto">
+        <p>Módulo de Recetario y Catálogo Nutresa &copy; 2026</p>
+    </footer>
+
+    <!-- Scripts de Funcionalidad -->
+    <script>
+        // 1. Control del Menú Lateral Desplegable
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        let isMenuOpen = false;
+
+        function toggleSidebar() {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                sidebarMenu.classList.remove('-translate-x-full');
+                menuOverlay.classList.remove('hidden');
+            } else {
+                sidebarMenu.classList.add('-translate-x-full');
+                menuOverlay.classList.add('hidden');
+            }
+        }
+
+        // 2. Control Modo Día / Noche
+        const htmlElement = document.documentElement;
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const themeText = document.getElementById('themeText');
+
+        function toggleDarkMode() {
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                htmlElement.classList.add('light');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                themeText.textContent = 'Modo Noche';
+            } else {
+                htmlElement.classList.remove('light');
+                htmlElement.classList.add('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                themeText.textContent = 'Modo Día';
+            }
+        }
+
+        // 3. Generador de Música Ambiental de Alta Presencia (Web Audio API mejorado)
+        let audioCtx = null;
+        let isMusicPlaying = false;
+        let chordInterval = null;
+        const musicIcon = document.getElementById('musicIcon');
+        const musicLabel = document.getElementById('musicLabel');
+
+        // Progresión con notas enriquecidas para mayor sonoridad
+        const chords = [
+            [261.63, 329.63, 392.00, 523.25], // C Major brillante
+            [220.00, 261.63, 329.63, 440.00], // A minor
+            [349.23, 440.00, 523.25, 659.25], // F Major
+            [392.00, 493.88, 587.33, 783.99]  // G Major
+        ];
+        let chordIndex = 0;
+
+        function playStrongChord(frequencies) {
+            if (!audioCtx || !isMusicPlaying) return;
+            const now = audioCtx.currentTime;
+            
+            frequencies.forEach((freq, i) => {
+                // Usamos doble oscilador por nota (onda triangular y senoidal) para un sonido más rico y con cuerpo
+                const osc1 = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter();
+
+                osc1.type = 'triangle';
+                osc2.type = 'sine';
+                osc1.frequency.setValueAtTime(freq, now + (i * 0.05));
+                osc2.frequency.setValueAtTime(freq * 1.002, now + (i * 0.05)); // Ligero chorus
+
+                // Filtro más abierto para que se note brillante
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(1400, now);
+
+                // Volumen con mayor ganancia para que destaque claramente
+                gain.gain.setValueAtTime(0.001, now + (i * 0.05));
+                gain.gain.exponentialRampToValueAtTime(0.12, now + (i * 0.05) + 0.3); // Volumen notable
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.5);
+
+                osc1.connect(filter);
+                osc2.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc1.start(now + (i * 0.05));
+                osc2.start(now + (i * 0.05));
+                osc1.stop(now + 3.6);
+                osc2.stop(now + 3.6);
+            });
+        }
+
+        function toggleAmbientMusic() {
+            if (!isMusicPlaying) {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                isMusicPlaying = true;
+                musicIcon.textContent = '⏸';
+                musicLabel.textContent = 'Música Activa: On';
+                
+                playStrongChord(chords[chordIndex]);
+                chordIndex = (chordIndex + 1) % chords.length;
+                chordInterval = setInterval(() => {
+                    playStrongChord(chords[chordIndex]);
+                    chordIndex = (chordIndex + 1) % chords.length;
+                }, 3200);
+            } else {
+                isMusicPlaying = false;
+                clearInterval(chordInterval);
+                musicIcon.textContent = '▶';
+                musicLabel.textContent = 'Música Activa: Off';
+            }
+        }
+    </script>
+</body>
 </html>
